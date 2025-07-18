@@ -19,7 +19,7 @@ async function getRecommendation(prompt) {
   const apiKey = "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY";
 
   // Kiểm tra xem người dùng đã thêm API key chưa
-  if (apiKey === "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY" || apiKey === "") {
+  if (apiKey === "AIzaSyCKwsdkP7fnDZBCq11yyehatd1kpcYg9Qs" || apiKey === "") {
     // Hiển thị lỗi ngay trên giao diện modal thay vì chỉ ở console
     const aiResponseContainer = document.getElementById('ai-response');
     if(aiResponseContainer) {
