@@ -30,9 +30,8 @@ async function getRecommendation(prompt) {
     return;
   }
 
-  // ĐÃ SỬA LỖI: Cập nhật tên model thành "gemini-1.5-flash-latest" để tương thích với API.
-  const modelName = "gemini-1.5-flash-latest";
-  const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+  // ĐÃ SỬA LỖI: Nhúng thẳng tên model vào URL để tránh lỗi "modelName is not defined".
+  const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
   
   const payload = {
     contents: [{ parts: [{ "text": prompt }] }]
