@@ -10,11 +10,28 @@
  * @returns {Promise<object>} - Đối tượng JSON trả về từ API của Google.
  */
 async function getRecommendation(prompt) {
-  // LƯU Ý QUAN TRỌNG: API Key được để trống. 
-  // Môi trường thực thi (Canvas) sẽ tự động chèn một khóa hợp lệ và an toàn vào đây khi chạy.
-  const apiKey = "AIzaSyCKwsdkP7fnDZBCq11yyehatd1kpcYg9Qs"; 
+  // =================================================================================
+  // |   QUAN TRỌNG: BẠN CẦN THÊM API KEY CỦA MÌNH VÀO ĐÂY                           |
+  // | 1. Truy cập https://aistudio.google.com/app/apikey để tạo một API key mới.   |
+  // | 2. Sao chép API key đó và dán vào giữa hai dấu ngoặc kép bên dưới.           |
+  // |    Ví dụ: const apiKey = "AIzaSy...YOUR_KEY_HERE...";                         |
+  // =================================================================================
+  const apiKey = "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY";
 
-  // URL của API Gemini, sử dụng model 'gemini-pro'.
+  // Kiểm tra xem người dùng đã thêm API key chưa
+  if (apiKey === "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY" || apiKey === "") {
+    // Hiển thị lỗi ngay trên giao diện modal thay vì chỉ ở console
+    const aiResponseContainer = document.getElementById('ai-response');
+    if(aiResponseContainer) {
+        aiResponseContainer.innerHTML = `<p class="text-red-600 font-bold">Lỗi cấu hình: API Key chưa được cung cấp.</p><p class="text-gray-700 mt-2">Vui lòng làm theo hướng dẫn trong file <strong>script.js</strong> để thêm khóa API của Google AI và thử lại.</p>`;
+        document.getElementById('loading-spinner').classList.add('hidden');
+    }
+    // Dừng hàm tại đây
+    return;
+  }
+
+  // ĐÃ SỬA LỖI: Cập nhật tên model thành "gemini-1.5-flash-latest" để tương thích với API.
+  const modelName = "gemini-1.5-flash-latest";
   const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
   
   const payload = {
@@ -37,6 +54,7 @@ async function getRecommendation(prompt) {
     return await response.json();
   } catch (error) {
     console.error('Lỗi khi thực hiện yêu cầu đến Google AI:', error);
+    // Ném lại lỗi để hàm getAIRecommendations có thể bắt được
     throw error;
   }
 }
@@ -285,11 +303,13 @@ async function getAIRecommendations() {
     prompt += `Vui lòng trình bày câu trả lời bằng tiếng Việt, sử dụng định dạng Markdown để dễ đọc, bao gồm tiêu đề, in đậm và danh sách.`;
 
     try {
-        // Vì hàm getRecommendation đã được định nghĩa ở trên cùng file này,
-        // nó chắc chắn sẽ tồn tại ở đây.
-        const result = await getRecommendation(prompt); 
-        let text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Không nhận được phản hồi hợp lệ từ AI.";
-        aiResponseContainer.innerHTML = marked.parse(text);
+        const result = await getRecommendation(prompt);
+        // Nếu hàm getRecommendation trả về (do chưa có key), thì result sẽ là undefined.
+        // Cần kiểm tra để không gây lỗi.
+        if (result) {
+            let text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Không nhận được phản hồi hợp lệ từ AI.";
+            aiResponseContainer.innerHTML = marked.parse(text);
+        }
     } catch (error) {
         console.error("Lỗi khi gọi AI:", error);
         aiResponseContainer.innerHTML = `<p class="text-red-500">Đã xảy ra lỗi: ${error.message}. Vui lòng kiểm tra lại và thử lại.</p>`;
