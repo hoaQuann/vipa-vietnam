@@ -1,4 +1,50 @@
-// File: script.js
+// File: script.js (Phiên bản gộp)
+// =================================================================
+// | PHẦN 1: ĐỊNH NGHĨA HÀM GỌI API (từ get-recommendation.js) |
+// =================================================================
+
+/**
+ * Hàm này gửi một yêu cầu đến API của Google Gemini.
+ * Nó được thiết kế để chạy an toàn trên phía client (trình duyệt).
+ * @param {string} prompt - Câu lệnh prompt để gửi đến AI.
+ * @returns {Promise<object>} - Đối tượng JSON trả về từ API của Google.
+ */
+async function getRecommendation(prompt) {
+  // LƯU Ý QUAN TRỌNG: API Key được để trống. 
+  // Môi trường thực thi (Canvas) sẽ tự động chèn một khóa hợp lệ và an toàn vào đây khi chạy.
+  const apiKey = ""; 
+
+  // URL của API Gemini, sử dụng model 'gemini-pro'.
+  const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+  
+  const payload = {
+    contents: [{ parts: [{ "text": prompt }] }]
+  };
+
+  const fetchOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  };
+
+  try {
+    const response = await fetch(googleApiUrl, fetchOptions);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Lỗi từ Google API:", errorData);
+      throw new Error(errorData.error?.message || `Lỗi HTTP: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Lỗi khi thực hiện yêu cầu đến Google AI:', error);
+    throw error;
+  }
+}
+
+
+// =================================================================
+// |      PHẦN 2: LOGIC CHÍNH CỦA ỨNG DỤNG (script.js gốc)      |
+// =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -16,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startChecklistBtn.addEventListener('click', () => {
             infographicSection.classList.add('hidden');
             checklistSection.classList.remove('hidden');
-            window.scrollTo(0, 0); // Cuộn lên đầu trang
+            window.scrollTo(0, 0);
         });
     }
 
@@ -24,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         viewResultsBtn.addEventListener('click', () => {
             checklistSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
-            window.scrollTo(0, 0); // Cuộn lên đầu trang
+            window.scrollTo(0, 0);
         });
     }
 
@@ -32,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         backToCtaBtn.addEventListener('click', () => {
             resultsSection.classList.add('hidden');
             checklistSection.classList.remove('hidden');
-            window.scrollTo(0, 0); // Cuộn lên đầu trang
+            window.scrollTo(0, 0);
         });
     }
 
@@ -79,12 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- PHẦN 2: LOGIC TRANG CHECKLIST & KẾT QUẢ ---
     
-    // Gắn sự kiện cho các thành phần của checklist
     document.querySelectorAll('.score-radio').forEach(radio => {
         radio.addEventListener('change', handleRadioChange);
     });
 
-    // Các nút hành động trên trang kết quả
     const getRecommendationsBtn = document.getElementById('get-recommendations-btn');
     if(getRecommendationsBtn) getRecommendationsBtn.addEventListener('click', getAIRecommendations);
     
@@ -96,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportBtn = document.getElementById('exportBtn');
     if(exportBtn) exportBtn.addEventListener('click', exportCSV);
 
-    // Chạy hàm tính điểm lần đầu để khởi tạo giá trị là 0
     updateAllTotals();
 });
 
@@ -115,10 +158,9 @@ function handleRadioChange(event) {
 function updateAllTotals() {
     const pillarScores = { '1': [], '2': [], '3': [], '4': [] };
 
-    // Lấy điểm từ các radio đã chọn
     document.querySelectorAll('.score-radio:checked').forEach(radio => {
-        const indicatorId = radio.dataset.indicator; // "1.1", "1.2", ...
-        const pillar = indicatorId.split('.')[0]; // "1", "2", ...
+        const indicatorId = radio.dataset.indicator;
+        const pillar = indicatorId.split('.')[0];
         const score = parseInt(radio.value);
         if (pillar && pillarScores[pillar]) {
             pillarScores[pillar].push(score);
@@ -129,25 +171,20 @@ function updateAllTotals() {
     let totalVipaScore = 0;
     const weights = { 1: 0.15, 2: 0.25, 3: 0.25, 4: 0.35 };
 
-    // Tính điểm trung bình từng trụ cột và cập nhật UI
     for (let i = 1; i <= 4; i++) {
-        // Đếm số lượng câu hỏi trong mỗi trụ cột để tính trung bình chính xác
-        const indicatorCount = document.querySelectorAll(`input[name^="score_${i}."][type="radio"]`).length / 5; // Chia 5 vì có 5 lựa chọn cho mỗi câu
+        const indicatorCount = document.querySelectorAll(`input[name^="score_${i}."][type="radio"]`).length / 5;
         const scores = pillarScores[i];
         const sum = scores.reduce((a, b) => a + b, 0);
         const avg = indicatorCount > 0 ? sum / indicatorCount : 0;
         
         pillarAvgs[i] = avg;
 
-        // Cập nhật điểm trung bình trong bảng checklist
         const pillarAvgEl = document.getElementById(`pillar-avg-${i}`);
         if(pillarAvgEl) pillarAvgEl.textContent = avg.toFixed(2);
         
-        // Cập nhật điểm trung bình trong bảng tóm tắt kết quả
         const summaryPillarAvgEl = document.getElementById(`summary-pillar-${i}-avg`);
         if(summaryPillarAvgEl) summaryPillarAvgEl.textContent = avg.toFixed(2);
         
-        // Tính và cập nhật điểm theo trọng số
         const weightedScore = avg * weights[i];
         const weightedScoreEl = document.getElementById(`summary-pillar-${i}-weighted`);
         if(weightedScoreEl) weightedScoreEl.textContent = weightedScore.toFixed(2);
@@ -155,15 +192,12 @@ function updateAllTotals() {
         totalVipaScore += weightedScore;
     }
     
-    // Cập nhật tổng điểm
     const totalVipaScoreEl = document.getElementById('total-vipa-score');
     if(totalVipaScoreEl) totalVipaScoreEl.textContent = totalVipaScore.toFixed(2);
 
-    // Xác định và cập nhật xếp hạng
     let rank = 'Chưa xác định';
     const viewResultsBtn = document.getElementById('view-results-btn');
     
-    // Chỉ hiện nút "Xem Kết quả" khi có ít nhất 1 câu trả lời
     if (document.querySelectorAll('.score-radio:checked').length > 0) {
         if (viewResultsBtn) viewResultsBtn.classList.remove('hidden');
         if (totalVipaScore >= 1.0 && totalVipaScore <= 1.79) rank = 'Cấp 1: Khởi tạo';
@@ -251,16 +285,14 @@ async function getAIRecommendations() {
     prompt += `Vui lòng trình bày câu trả lời bằng tiếng Việt, sử dụng định dạng Markdown để dễ đọc, bao gồm tiêu đề, in đậm và danh sách.`;
 
     try {
-        // Kiểm tra xem hàm getRecommendation có tồn tại không (từ file get-recommendation.js)
-        if (typeof getRecommendation !== 'function') {
-            throw new Error("Hàm 'getRecommendation' không được định nghĩa. Hãy đảm bảo file get-recommendation.js đã được tải.");
-        }
+        // Vì hàm getRecommendation đã được định nghĩa ở trên cùng file này,
+        // nó chắc chắn sẽ tồn tại ở đây.
         const result = await getRecommendation(prompt); 
         let text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Không nhận được phản hồi hợp lệ từ AI.";
         aiResponseContainer.innerHTML = marked.parse(text);
     } catch (error) {
         console.error("Lỗi khi gọi AI:", error);
-        aiResponseContainer.innerHTML = `<p class="text-red-500">Đã xảy ra lỗi: ${error.message}. Vui lòng kiểm tra file get-recommendation.js và cấu hình phía máy chủ nếu có.</p>`;
+        aiResponseContainer.innerHTML = `<p class="text-red-500">Đã xảy ra lỗi: ${error.message}. Vui lòng kiểm tra lại và thử lại.</p>`;
     } finally {
         loadingSpinner.classList.add('hidden');
     }
@@ -302,16 +334,6 @@ function exportCSV() {
     link.setAttribute("href", encodedUri);
     const fileName = data.generalInfo.tenDoanhNghiep ? data.generalInfo.tenDoanhNghiep.replace(/ /g, '_') : 'Khong_ten';
     link.setAttribute("download", `VIPA_Checklist_${fileName}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-// Thêm hỗ trợ cho việc xuất CSV
-function downloadCSV(csvContent, fileName) {
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", fileName);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
