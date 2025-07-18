@@ -12,7 +12,7 @@
 async function getRecommendation(prompt) {
   // LƯU Ý QUAN TRỌNG: API Key được để trống. 
   // Môi trường thực thi (Canvas) sẽ tự động chèn một khóa hợp lệ và an toàn vào đây khi chạy.
-  const apiKey = ""; 
+  const apiKey = "AIzaSyAr74Tw1T942FzgjbhcLqvvbz1DA2VOjYs"; 
 
   // URL của API Gemini, sử dụng model 'gemini-pro'.
   const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
