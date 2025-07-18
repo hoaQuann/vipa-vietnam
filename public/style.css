@@ -1,0 +1,95 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f1f5f9; /* Một màu xám nhạt hơn cho nền */
+    scroll-behavior: smooth;
+}
+
+/* --- Styles cho trang Infographic --- */
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 300px; /* Cố định chiều cao */
+    width: 300px; /* Cố định chiều rộng */
+}
+
+/* --- Styles chung cho các trang --- */
+#infographic-section, #checklist-section, #results-section {
+    padding: 1rem;
+}
+
+@media (min-width: 640px) {
+    #infographic-section, #checklist-section, #results-section {
+        padding: 2rem;
+    }
+}
+
+/* --- Styles cho trang Checklist & Kết quả --- */
+.table-header {
+    background-color: #f3f4f6;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.pillar-header {
+    background-color: #d1d5db;
+    font-weight: 700;
+    text-align: left;
+    color: #1f2937;
+}
+.summary-table td, .summary-table th {
+    font-weight: 600;
+}
+.score-radio {
+    transform: scale(1.2); /* Làm cho radio button to hơn một chút */
+    margin-right: 0.25rem;
+}
+
+/* --- Styles cho Modal AI --- */
+#ai-modal-content h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: #004AAD;
+}
+#ai-modal-content h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+#ai-modal-content ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    padding-left: 1rem;
+}
+#ai-modal-content li {
+    margin-bottom: 0.5rem;
+}
+#ai-modal-content p {
+    line-height: 1.6;
+}
+/* --- Styles cho nút xuất kết quả --- */
+.export-button {
+    background-color: #004AAD; /* Màu xanh đậm */
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem; /* Bo góc nhẹ */
+    cursor: pointer;
+    font-weight: 600;
+}
+.export-button:hover {
+    background-color: #003580; /* Màu xanh đậm hơn khi hover */
+}
+/* --- Styles cho nút xuất CSV --- */
+.export-csv-button {
+    background-color: #10B981; /* Màu xanh lá */
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem; /* Bo góc nhẹ */
+    cursor: pointer;
+    font-weight: 600;
+}
