@@ -85,15 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (viewResultsBtn) {
         viewResultsBtn.addEventListener('click', () => {
-            if (validateChecklist()) {
-                checklistSection.classList.add('hidden');
-                resultsSection.classList.remove('hidden');
-                calculateAndDisplayResults();
-                window.scrollTo(0, 0);
-            } else {
-                // Thay thế alert bằng một thông báo tùy chỉnh
-                showCustomAlert("Vui lòng hoàn thành tất cả các câu hỏi trong checklist trước khi xem kết quả.");
-            }
+            checklistSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            window.scrollTo(0, 0);
         });
     }
 
