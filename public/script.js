@@ -85,9 +85,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (viewResultsBtn) {
         viewResultsBtn.addEventListener('click', () => {
-            checklistSection.classList.add('hidden');
-            resultsSection.classList.remove('hidden');
-            window.scrollTo(0, 0);
+            if (validateChecklist()) {
+                checklistSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+                calculateAndDisplayResults();
+                window.scrollTo(0, 0);
+            } else {
+                // Thay thế alert bằng một thông báo tùy chỉnh
+                showCustomAlert("Vui lòng hoàn thành tất cả các câu hỏi trong checklist trước khi xem kết quả.");
+            }
         });
     }
 
@@ -275,6 +281,7 @@ async function getAIRecommendations() {
     aiResponseContainer.innerHTML = '';
 
     const assessmentData = collectFullAssessmentData();
+    const summaryScores = assessmentData.summary;
     let prompt = `Bạn là một chuyên gia tư vấn chiến lược kinh doanh cho các doanh nghiệp tại tỉnh Kiên Giang, Việt Nam. Một doanh nghiệp có tên "${assessmentData.generalInfo.tenDoanhNghiep || 'Một doanh nghiệp'}" vừa hoàn thành bài đánh giá mức độ sẵn sàng chuyển đổi số (ViPA) và có kết quả như sau:\n`;
     prompt += `- Tổng điểm ViPA: ${assessmentData.summary.totalVipaScore} - Mức độ: ${assessmentData.summary.finalRank}\n`;
     prompt += `- Điểm các trụ cột:\n`;
@@ -297,7 +304,7 @@ async function getAIRecommendations() {
 
     prompt += `\nDựa trên kết quả này và bối cảnh kinh tế biển, du lịch, nông nghiệp công nghệ cao của Kiên Giang, hãy cung cấp một kế hoạch hành động chiến lược cho doanh nghiệp này. Kế hoạch cần bao gồm:\n`;
     prompt += `1.  **Phân tích tổng quan:** Tóm tắt ngắn gọn điểm mạnh, điểm yếu dựa trên điểm số.\n`;
-    prompt += `2.  **Lộ trình hành động ưu tiên:** Đề xuất 3-5 bước hành động cụ thể, sắp xếp theo thứ tự ưu tiên. Với mỗi bước, giải thích rõ 'Tại sao' (lợi ích) và 'Làm thế nào' (các bước triển khai cụ thể).\n`;
+    prompt += `2.  **Lộ trình hành động ưu tiên:** Đề xuất 3-5 bước hành động cụ thể, sắp xếp theo thứ tự ưu tiên.Lưu ý: tập trung nóng cốt ở 2 trụ cột là Quản lý Doanh nghiệp và Quản lý Năng suất (Hạ tầng cho CĐS và Sản xuất Thông minh là đích đến cuối cùng, không quá tập trung) . Với mỗi bước, giải thích rõ 'Tại sao' (lợi ích) và 'Làm thế nào' (các bước triển khai cụ thể).\n`;
     prompt += `3.  **Lưu ý đặc thù:** Đưa ra các gợi ý có tính đến đặc thù của Kiên Giang (ví dụ: ứng dụng truy xuất nguồn gốc cho thủy sản, giải pháp du lịch thông minh, logistics cảng biển...). \n\n`;
     prompt += `Vui lòng trình bày câu trả lời bằng tiếng Việt, sử dụng định dạng Markdown để dễ đọc, bao gồm tiêu đề, in đậm và danh sách.`;
 
