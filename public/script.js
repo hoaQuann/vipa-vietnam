@@ -11,7 +11,7 @@
 async function getRecommendation(prompt) {
   // API Key của bạn. Quan trọng: Giữ bí mật và không chia sẻ công khai.
   // Môi trường thực thi Canvas sẽ tự động chèn khóa hợp lệ.
-  const apiKey = ""; // Chèn API Key của bạn vào đây nếu chạy độc lập
+  const apiKey = "IzaSyCKwsdkP7fnDZBCq11yyehatd1kpcYg9Qs"; // Chèn API Key của bạn vào đây nếu chạy độc lập
 
   if (apiKey === "") {
     const aiResponseContainer = document.getElementById('ai-response');
