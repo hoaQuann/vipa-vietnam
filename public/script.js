@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: ['Sản xuất Thông minh', 'Quản lý Năng suất', 'Hệ thống hạ tầng cho CĐS', 'Quản lý Doanh nghiệp'],
                 datasets: [{
-                    data: [35, 25, 25, 15],
+                    data: [15, 35, 15, 35],
                     backgroundColor: ['#004AAD', '#0076D1', '#00AEEF', '#80D8F7'],
                     borderColor: '#ffffff',
                     borderWidth: 4,
