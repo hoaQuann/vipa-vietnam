@@ -324,7 +324,7 @@ function exportCSV() {
         `"Tên Doanh nghiệp:","${data.generalInfo.tenDoanhNghiep}"`,
         `"Địa chỉ:","${data.generalInfo.diaChi}"`,
         `"Người liên hệ:","${data.generalInfo.nguoiLienHe}"`,
-        `"Chuyên gia đánh giá:","${data.generalInfo.chuyenGiaDanhGia}"`,
+        `"Chuyên gia tư vấn thực hiện khảo sát:","${data.generalInfo.chuyenGiaDanhGia}"`,
         `"Ngày đánh giá:","${data.generalInfo.ngayDanhGia}"`
     ];
     csvContent += generalInfo.join("\r\n") + "\r\n\r\n";
