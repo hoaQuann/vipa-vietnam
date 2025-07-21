@@ -447,12 +447,14 @@
         </div>
     </div>
 
-    <!-- Thư viện html-docx-js và FileSaver -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="https://unpkg.com/html-docx-js/dist/html-docx.min.js"></script>
+    <!-- CẬP NHẬT: Thay đổi đường dẫn đến script cục bộ -->
+    <!-- Giả sử bạn đã tải về và đặt các tệp này vào cùng thư mục với index.html -->
+    <script src="FileSaver.min.js"></script>
+    <script src="html-docx.min.js"></script>
     <script src="script.js"></script>
 
     <script>
+    // Giữ nguyên phần script này vì nó không liên quan đến việc xuất file Word
     document.addEventListener('DOMContentLoaded', function () {
         // Chỉ vẽ biểu đồ nếu có phần tử impactChart
         const ctx = document.getElementById('impactChart');
