@@ -31,7 +31,7 @@ async function getRecommendation(prompt) {
     }
   
     // ĐÃ SỬA LỖI: Nhúng thẳng tên model vào URL để tránh lỗi "modelName is not defined".
-    const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+    const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
     
     const payload = {
       contents: [{ parts: [{ "text": prompt }] }]

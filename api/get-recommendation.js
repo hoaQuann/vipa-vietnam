@@ -14,7 +14,7 @@ async function getRecommendation(prompt) {
   const apiKey = "AIzaSyAr74Tw1T942FzgjbhcLqvvbz1DA2VOjYs"; 
 
   // URL của API Gemini, sử dụng model 'gemini-pro'.
-  const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+  const googleApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
   
   // Dữ liệu gửi đi (payload) theo định dạng yêu cầu của API.
   const payload = {
