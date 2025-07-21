@@ -393,7 +393,7 @@ async function getRecommendation(prompt) {
           html += `<tr><td><b>Địa chỉ</b></td><td>${data.generalInfo.diaChi || ''}</td></tr>`;
           html += `<tr><td><b>Người liên hệ</b></td><td>${data.generalInfo.nguoiLienHe || ''}</td></tr>`;
           html += `<tr><td><b>Sản phẩm/dịch vụ chủ chốt</b></td><td>${data.generalInfo.sanPhamChuChot || ''}</td></tr>`;
-          html += `<tr><td><b>Ngày đánh giá</b></td><td>${data.generalInfo.ngayDanhGia || ''}</td></tr>`;
+          html += `<tr><td><b>Ngày thực hiện bộ tiêu chí</b></td><td>${data.generalInfo.ngayDanhGia || ''}</td></tr>`;
           html += `</tbody></table>`;
 
           // PHẦN B: Bảng chấm điểm chi tiết
