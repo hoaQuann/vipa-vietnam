@@ -377,38 +377,13 @@ async function getRecommendation(prompt) {
           alert("Không thể xuất file Word do thư viện bị lỗi. Vui lòng tải lại trang và thử lại.");
           return;
       }
-  
+
       try {
           const data = collectFullAssessmentData();
-          
-          let weightingChartImg = '';
-          const weightingChartCanvas = document.getElementById('weightingChart');
-          if (weightingChartCanvas) {
-              try {
-                  const dataURL = weightingChartCanvas.toDataURL('image/png');
-                  weightingChartImg = `<p style="text-align:center;"><img src="${dataURL}" alt="Biểu đồ trọng số" style="width:400px; height:auto;"/></p>`;
-              } catch (e) {
-                  console.error("Không thể chuyển đổi biểu đồ trọng số:", e);
-                  weightingChartImg = '<p><i>[Lỗi: Không thể hiển thị biểu đồ trọng số]</i></p>';
-              }
-          }
-  
-          let impactChartImg = '';
-          const impactChartCanvas = document.getElementById('impactChart');
-          if (impactChartCanvas) {
-               try {
-                  const dataURL = impactChartCanvas.toDataURL('image/png');
-                  impactChartImg = `<p style="text-align:center;"><img src="${dataURL}" alt="Biểu đồ tác động" style="width:500px; height:auto;"/></p>`;
-              } catch (e) {
-                  console.error("Không thể chuyển đổi biểu đồ tác động:", e);
-                  impactChartImg = '<p><i>[Lỗi: Không thể hiển thị biểu đồ tác động]</i></p>';
-              }
-          }
-          
+
+          // PHẦN A: Thông tin chung
           let html = `<!DOCTYPE html><html><head><meta charset='utf-8'><title>Báo cáo ViPA</title></head><body>`;
-          
           html += `<h1>BÁO CÁO ĐÁNH GIÁ MỨC ĐỘ SẴN SÀNG CHUYỂN ĐỔI SỐ (ViPA)</h1>`;
-          
           html += `<h2>PHẦN A: THÔNG TIN CHUNG</h2>`;
           html += `<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;"><tbody>`;
           html += `<tr><td style="width: 30%;"><b>Tên Doanh nghiệp</b></td><td>${data.generalInfo.tenDoanhNghiep || ''}</td></tr>`;
@@ -417,45 +392,88 @@ async function getRecommendation(prompt) {
           html += `<tr><td><b>Chuyên gia tư vấn</b></td><td>${data.generalInfo.chuyenGiaDanhGia || ''}</td></tr>`;
           html += `<tr><td><b>Ngày đánh giá</b></td><td>${data.generalInfo.ngayDanhGia || ''}</td></tr>`;
           html += `</tbody></table>`;
-  
-          html += `<h2>PHẦN B: TỔNG QUAN & TRỰC QUAN HÓA</h2>`;
-          html += `<h3>Biểu đồ trọng số các trụ cột</h3>`;
-          html += weightingChartImg;
-          html += `<h3>Biểu đồ tác động & kết quả dự kiến</h3>`;
-          html += impactChartImg;
-          
-          html += `<h2>PHẦN C: BẢNG CHẤM ĐIỂM CHI TIẾT</h2>`;
+
+          // PHẦN B: Bảng chấm điểm chi tiết
+          html += `<h2>PHẦN B: BẢNG CHẤM ĐIỂM CHI TIẾT</h2>`;
           html += `<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;"><thead><tr><th style="width: 25%;">Chỉ số</th><th style="width: 45%;">Mức độ lựa chọn</th><th style="width: 10%;">Điểm</th><th>Bằng chứng/Ghi chú</th></tr></thead><tbody>`;
-          data.detailedScores.forEach(item => {
+          const indicatorLabels = [];
+          const indicatorScores = [];
+          data.detailedScores.forEach((item, idx) => {
               html += `<tr><td><b>${item.indicator || ''}</b></td><td>${item.selectionText || ''}</td><td style="text-align:center;">${item.score || '0'}</td><td>${item.note || ''}</td></tr>`;
+              indicatorLabels.push(item.indicator || `Câu ${idx+1}`);
+              indicatorScores.push(Number(item.score) || 0);
           });
           html += `</tbody></table>`;
-          
-          html += `<h2>PHẦN D: BẢNG TỔNG HỢP KẾT QUẢ</h2>`;
-          html += `<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;"><thead><tr><th>Trụ cột</th><th>Điểm Trung bình</th><th>Trọng số (%)</th><th>Điểm theo Trọng số</th></tr></thead><tbody>`;
-          html += `<tr><td>1. Quản lý Doanh nghiệp</td><td style="text-align:center;">${data.summary.pillar1_avg}</td><td style="text-align:center;">35%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar1_avg) * 0.35).toFixed(2)}</td></tr>`;
-          html += `<tr><td>2. Quản lý Năng suất</td><td style="text-align:center;">${data.summary.pillar2_avg}</td><td style="text-align:center;">35%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar2_avg) * 0.35).toFixed(2)}</td></tr>`;
-          html += `<tr><td>3. Hệ thống hạ tầng cho CĐS</td><td style="text-align:center;">${data.summary.pillar3_avg}</td><td style="text-align:center;">15%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar3_avg) * 0.15).toFixed(2)}</td></tr>`;
-          html += `<tr><td>4. Sản xuất Thông minh</td><td style="text-align:center;">${data.summary.pillar4_avg}</td><td style="text-align:center;">15%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar4_avg) * 0.15).toFixed(2)}</td></tr>`;
-          html += `<tr><td colspan='3' style='text-align:right;'><b>TỔNG ĐIỂM ViPA</b></td><td style="text-align:center;"><b>${data.summary.totalVipaScore}</b></td></tr>`;
-          html += `<tr><td colspan='3' style='text-align:right;'><b>KẾT LUẬN MỨC ĐỘ SẴN SÀNG</b></td><td style="text-align:center;"><b>${data.summary.finalRank}</b></td></tr>`;
-          html += `</tbody></table>`;
-          
-          // CẬP NHẬT: Thêm phần lộ trình của AI vào file Word
-          if (window.lastAIRecommendationText) {
-              html += `<h2>PHẦN E: LỘ TRÌNH HÀNH ĐỘNG DO AI ĐỀ XUẤT</h2>`;
-              // Chuyển đổi Markdown sang HTML để hiển thị đẹp hơn trong Word
-              const aiHtmlContent = window.marked ? marked.parse(window.lastAIRecommendationText) : `<p>${window.lastAIRecommendationText.replace(/\n/g, '<br>')}</p>`;
-              html += `<div>${aiHtmlContent}</div>`;
-          }
-          
-          html += `</body></html>`;
-          
-          var blob = htmlDocx.asBlob(html, {orientation: 'portrait'});
-          const fileName = data.generalInfo.tenDoanhNghiep ? data.generalInfo.tenDoanhNghiep.replace(/ /g, '_') : 'Khong_ten';
-          
-          saveAs(blob, `VIPA_Report_${fileName}.docx`);
-  
+
+          // PHẦN C: Biểu đồ điểm các chỉ số (16 câu hỏi)
+          html += `<h2>PHẦN C: BIỂU ĐỒ ĐIỂM CÁC CHỈ SỐ (16 CÂU HỎI)</h2>`;
+          // Tạo canvas tạm để vẽ biểu đồ
+          let chartImg = '';
+          let tempCanvas = document.createElement('canvas');
+          tempCanvas.width = 900; tempCanvas.height = 400;
+          document.body.appendChild(tempCanvas);
+          let chart = new Chart(tempCanvas.getContext('2d'), {
+              type: 'bar',
+              data: {
+                  labels: indicatorLabels,
+                  datasets: [{
+                      label: 'Điểm từng chỉ số',
+                      data: indicatorScores,
+                      backgroundColor: '#0076D1',
+                      borderColor: '#004AAD',
+                      borderWidth: 2
+                  }]
+              },
+              options: {
+                  responsive: false,
+                  plugins: {
+                      legend: { display: false },
+                      title: { display: true, text: 'Biểu đồ điểm các chỉ số (16 câu hỏi)' }
+                  },
+                  scales: {
+                      y: { beginAtZero: true, max: 5, title: { display: true, text: 'Điểm' } },
+                      x: { title: { display: true, text: 'Chỉ số' }, ticks: { autoSkip: false, maxRotation: 90, minRotation: 45 } }
+                  }
+              }
+          });
+          // Đợi Chart.js vẽ xong (bắt buộc với một số trình duyệt)
+          setTimeout(() => {
+              try {
+                  chartImg = `<p style="text-align:center;"><img src="${tempCanvas.toDataURL('image/png')}" alt="Biểu đồ điểm chỉ số" style="width:800px; height:auto;"/></p>`;
+              } catch (e) {
+                  chartImg = '<p><i>[Lỗi: Không thể hiển thị biểu đồ chỉ số]</i></p>';
+              }
+              chart.destroy();
+              tempCanvas.remove();
+
+              // Tiếp tục xuất các phần còn lại
+              let htmlRest = '';
+              htmlRest += chartImg;
+
+              // PHẦN D: Bảng tổng hợp kết quả
+              htmlRest += `<h2>PHẦN D: BẢNG TỔNG HỢP KẾT QUẢ</h2>`;
+              htmlRest += `<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;"><thead><tr><th>Trụ cột</th><th>Điểm Trung bình</th><th>Trọng số (%)</th><th>Điểm theo Trọng số</th></tr></thead><tbody>`;
+              htmlRest += `<tr><td>1. Quản lý Doanh nghiệp</td><td style="text-align:center;">${data.summary.pillar1_avg}</td><td style="text-align:center;">35%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar1_avg) * 0.35).toFixed(2)}</td></tr>`;
+              htmlRest += `<tr><td>2. Quản lý Năng suất</td><td style="text-align:center;">${data.summary.pillar2_avg}</td><td style="text-align:center;">35%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar2_avg) * 0.35).toFixed(2)}</td></tr>`;
+              htmlRest += `<tr><td>3. Hệ thống hạ tầng cho CĐS</td><td style="text-align:center;">${data.summary.pillar3_avg}</td><td style="text-align:center;">15%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar3_avg) * 0.15).toFixed(2)}</td></tr>`;
+              htmlRest += `<tr><td>4. Sản xuất Thông minh</td><td style="text-align:center;">${data.summary.pillar4_avg}</td><td style="text-align:center;">15%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar4_avg) * 0.15).toFixed(2)}</td></tr>`;
+              htmlRest += `<tr><td colspan='3' style='text-align:right;'><b>TỔNG ĐIỂM ViPA</b></td><td style="text-align:center;"><b>${data.summary.totalVipaScore}</b></td></tr>`;
+              htmlRest += `<tr><td colspan='3' style='text-align:right;'><b>KẾT LUẬN MỨC ĐỘ SẴN SÀNG</b></td><td style="text-align:center;"><b>${data.summary.finalRank}</b></td></tr>`;
+              htmlRest += `</tbody></table>`;
+
+              // PHẦN E: Lộ trình AI
+              if (window.lastAIRecommendationText) {
+                  htmlRest += `<h2>PHẦN E: LỘ TRÌNH HÀNH ĐỘNG DO AI ĐỀ XUẤT</h2>`;
+                  const aiHtmlContent = window.marked ? marked.parse(window.lastAIRecommendationText) : `<p>${window.lastAIRecommendationText.replace(/\n/g, '<br>')}</p>`;
+                  htmlRest += `<div>${aiHtmlContent}</div>`;
+              }
+              htmlRest += `</body></html>`;
+
+              // Kết hợp và xuất file Word
+              var blob = htmlDocx.asBlob(html + htmlRest, {orientation: 'portrait'});
+              const fileName = data.generalInfo.tenDoanhNghiep ? data.generalInfo.tenDoanhNghiep.replace(/ /g, '_') : 'Khong_ten';
+              saveAs(blob, `VIPA_Report_${fileName}.docx`);
+          }, 500); // Đợi 500ms để Chart.js vẽ xong
       } catch (error) {
           console.error("Đã xảy ra lỗi nghiêm trọng khi tạo file Word:", error);
           alert("Rất tiếc, đã có lỗi xảy ra trong quá trình tạo báo cáo. Vui lòng thử lại.");
