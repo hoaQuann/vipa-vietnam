@@ -16,7 +16,7 @@ async function getRecommendation(prompt) {
     // | 2. Sao chép API key đó và dán vào giữa hai dấu ngoặc kép bên dưới.           |
     // |    Ví dụ: const apiKey = "AIzaSy...YOUR_KEY_HERE...";                         |
     // =================================================================================
-    const apiKey = "AIzaSyCKwsdkP7fnDZBCq11yyehatd1kpcYg9Qs"; // <-- THAY API KEY CỦA BẠN VÀO ĐÂY
+    const apiKey = "AIzaSyAr74Tw1T942FzgjbhcLqvvbz1DA2VOjYs"; // <-- THAY API KEY CỦA BẠN VÀO ĐÂY
   
     // Kiểm tra xem người dùng đã thêm API key chưa
     if (apiKey === "" || apiKey === "YOUR_API_KEY_HERE") {
