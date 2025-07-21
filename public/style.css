@@ -93,3 +93,34 @@ body {
     cursor: pointer;
     font-weight: 600;
 }
+
+.impact-card {
+  background: #E3F0FF;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 74, 173, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  min-height: 220px;
+  text-align: center;
+  transition: box-shadow 0.2s;
+}
+.impact-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 74, 173, 0.16);
+}
+.impact-number {
+  font-family: 'Inter', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #004AAD;
+  margin-bottom: 1rem;
+}
+.impact-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.5;
+}
