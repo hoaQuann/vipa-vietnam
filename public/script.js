@@ -63,7 +63,8 @@ async function getRecommendation(prompt) {
   // |      PHẦN 2: LOGIC CHÍNH CỦA ỨNG DỤNG (script.js gốc)      |
   // =================================================================
   
-  document.addEventListener('DOMContentLoaded', () => {
+  // Sử dụng 'load' để đảm bảo TẤT CẢ tài nguyên (script, ảnh, css) đã tải xong.
+  window.addEventListener('load', () => {
       
       // --- PHẦN 0: KHAI BÁO BIẾN VÀ ĐIỀU HƯỚNG ---
       const infographicSection = document.getElementById('infographic-section');
@@ -308,12 +309,10 @@ async function getRecommendation(prompt) {
   
       try {
           const result = await getRecommendation(prompt);
-          // Nếu hàm getRecommendation trả về (do chưa có key), thì result sẽ là undefined.
-          // Cần kiểm tra để không gây lỗi.
           if (result) {
               let text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Không nhận được phản hồi hợp lệ từ AI.";
               aiResponseContainer.innerHTML = marked.parse(text);
-              // Lưu lại nội dung trả lời AI để xuất CSV
+              // Lưu lại nội dung trả lời AI để xuất file Word và CSV
               window.lastAIRecommendationText = text;
           }
       } catch (error) {
@@ -356,9 +355,7 @@ async function getRecommendation(prompt) {
       csvContent += `,,,TỔNG ĐIỂM ViPA,"${data.summary.totalVipaScore}"\r\n`;
       csvContent += `,,,KẾT LUẬN,"${data.summary.finalRank}"\r\n`;
       
-      // Thêm lộ trình đề xuất từ AI nếu có
       if (window.lastAIRecommendationText) {
-          // Làm sạch văn bản AI để phù hợp với CSV
           const cleanedAiText = window.lastAIRecommendationText.replace(/"/g, '""').replace(/\n/g, '\r\n');
           csvContent += `\r\n\r\n"LỘ TRÌNH ĐỀ XUẤT TỪ AI"\r\n`;
           csvContent += `"${cleanedAiText}"\r\n`;
@@ -375,20 +372,39 @@ async function getRecommendation(prompt) {
   }
   
   function exportWord() {
-      // === CẬP NHẬT: Thêm kiểm tra thư viện và xử lý lỗi ===
       if (typeof htmlDocx === 'undefined' || typeof saveAs === 'undefined') {
-          console.error("Lỗi: Thư viện html-docx-js hoặc FileSaver.js chưa được tải xong. Vui lòng kiểm tra kết nối mạng và thử lại.");
-          // Có thể thêm thông báo cho người dùng tại đây nếu muốn
-          // alert("Không thể xuất file Word do thư viện bị lỗi. Vui lòng tải lại trang và thử lại.");
+          console.error("Lỗi: Thư viện html-docx-js hoặc FileSaver.js chưa được tải xong.");
+          alert("Không thể xuất file Word do thư viện bị lỗi. Vui lòng tải lại trang và thử lại.");
           return;
       }
   
       try {
           const data = collectFullAssessmentData();
           
-          // === CẬP NHẬT: Loại bỏ hoàn toàn thẻ <style> để tăng độ ổn định ===
-          // Tạo HTML nội dung báo cáo không có CSS nội tuyến phức tạp.
-          // Chỉ sử dụng các thẻ HTML cơ bản.
+          let weightingChartImg = '';
+          const weightingChartCanvas = document.getElementById('weightingChart');
+          if (weightingChartCanvas) {
+              try {
+                  const dataURL = weightingChartCanvas.toDataURL('image/png');
+                  weightingChartImg = `<p style="text-align:center;"><img src="${dataURL}" alt="Biểu đồ trọng số" style="width:400px; height:auto;"/></p>`;
+              } catch (e) {
+                  console.error("Không thể chuyển đổi biểu đồ trọng số:", e);
+                  weightingChartImg = '<p><i>[Lỗi: Không thể hiển thị biểu đồ trọng số]</i></p>';
+              }
+          }
+  
+          let impactChartImg = '';
+          const impactChartCanvas = document.getElementById('impactChart');
+          if (impactChartCanvas) {
+               try {
+                  const dataURL = impactChartCanvas.toDataURL('image/png');
+                  impactChartImg = `<p style="text-align:center;"><img src="${dataURL}" alt="Biểu đồ tác động" style="width:500px; height:auto;"/></p>`;
+              } catch (e) {
+                  console.error("Không thể chuyển đổi biểu đồ tác động:", e);
+                  impactChartImg = '<p><i>[Lỗi: Không thể hiển thị biểu đồ tác động]</i></p>';
+              }
+          }
+          
           let html = `<!DOCTYPE html><html><head><meta charset='utf-8'><title>Báo cáo ViPA</title></head><body>`;
           
           html += `<h1>BÁO CÁO ĐÁNH GIÁ MỨC ĐỘ SẴN SÀNG CHUYỂN ĐỔI SỐ (ViPA)</h1>`;
@@ -401,17 +417,21 @@ async function getRecommendation(prompt) {
           html += `<tr><td><b>Chuyên gia tư vấn</b></td><td>${data.generalInfo.chuyenGiaDanhGia || ''}</td></tr>`;
           html += `<tr><td><b>Ngày đánh giá</b></td><td>${data.generalInfo.ngayDanhGia || ''}</td></tr>`;
           html += `</tbody></table>`;
+  
+          html += `<h2>PHẦN B: TỔNG QUAN & TRỰC QUAN HÓA</h2>`;
+          html += `<h3>Biểu đồ trọng số các trụ cột</h3>`;
+          html += weightingChartImg;
+          html += `<h3>Biểu đồ tác động & kết quả dự kiến</h3>`;
+          html += impactChartImg;
           
-          // Bảng chi tiết
-          html += `<h2>PHẦN B: BẢNG CHẤM ĐIỂM CHI TIẾT</h2>`;
+          html += `<h2>PHẦN C: BẢNG CHẤM ĐIỂM CHI TIẾT</h2>`;
           html += `<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;"><thead><tr><th style="width: 25%;">Chỉ số</th><th style="width: 45%;">Mức độ lựa chọn</th><th style="width: 10%;">Điểm</th><th>Bằng chứng/Ghi chú</th></tr></thead><tbody>`;
           data.detailedScores.forEach(item => {
               html += `<tr><td><b>${item.indicator || ''}</b></td><td>${item.selectionText || ''}</td><td style="text-align:center;">${item.score || '0'}</td><td>${item.note || ''}</td></tr>`;
           });
           html += `</tbody></table>`;
           
-          // Bảng tổng hợp
-          html += `<h2>PHẦN C: BẢNG TỔNG HỢP KẾT QUẢ</h2>`;
+          html += `<h2>PHẦN D: BẢNG TỔNG HỢP KẾT QUẢ</h2>`;
           html += `<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;"><thead><tr><th>Trụ cột</th><th>Điểm Trung bình</th><th>Trọng số (%)</th><th>Điểm theo Trọng số</th></tr></thead><tbody>`;
           html += `<tr><td>1. Quản lý Doanh nghiệp</td><td style="text-align:center;">${data.summary.pillar1_avg}</td><td style="text-align:center;">35%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar1_avg) * 0.35).toFixed(2)}</td></tr>`;
           html += `<tr><td>2. Quản lý Năng suất</td><td style="text-align:center;">${data.summary.pillar2_avg}</td><td style="text-align:center;">35%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar2_avg) * 0.35).toFixed(2)}</td></tr>`;
@@ -421,25 +441,24 @@ async function getRecommendation(prompt) {
           html += `<tr><td colspan='3' style='text-align:right;'><b>KẾT LUẬN MỨC ĐỘ SẴN SÀNG</b></td><td style="text-align:center;"><b>${data.summary.finalRank}</b></td></tr>`;
           html += `</tbody></table>`;
           
-          // Lộ trình AI
+          // CẬP NHẬT: Thêm phần lộ trình của AI vào file Word
           if (window.lastAIRecommendationText) {
-              html += `<h2>PHẦN D: LỘ TRÌNH HÀNH ĐỘNG DO AI ĐỀ XUẤT</h2>`;
+              html += `<h2>PHẦN E: LỘ TRÌNH HÀNH ĐỘNG DO AI ĐỀ XUẤT</h2>`;
+              // Chuyển đổi Markdown sang HTML để hiển thị đẹp hơn trong Word
               const aiHtmlContent = window.marked ? marked.parse(window.lastAIRecommendationText) : `<p>${window.lastAIRecommendationText.replace(/\n/g, '<br>')}</p>`;
               html += `<div>${aiHtmlContent}</div>`;
           }
           
           html += `</body></html>`;
           
-          // Chuyển đổi chuỗi HTML thành blob
           var blob = htmlDocx.asBlob(html, {orientation: 'portrait'});
           const fileName = data.generalInfo.tenDoanhNghiep ? data.generalInfo.tenDoanhNghiep.replace(/ /g, '_') : 'Khong_ten';
           
-          // Lưu blob thành file .docx
           saveAs(blob, `VIPA_Report_${fileName}.docx`);
   
       } catch (error) {
           console.error("Đã xảy ra lỗi nghiêm trọng khi tạo file Word:", error);
-          // alert("Rất tiếc, đã có lỗi xảy ra trong quá trình tạo báo cáo. Vui lòng thử lại.");
+          alert("Rất tiếc, đã có lỗi xảy ra trong quá trình tạo báo cáo. Vui lòng thử lại.");
       }
   }
   
