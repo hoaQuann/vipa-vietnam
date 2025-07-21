@@ -334,7 +334,7 @@ async function getRecommendation(prompt) {
           `"Địa chỉ:","${data.generalInfo.diaChi}"`,
           `"Người liên hệ:","${data.generalInfo.nguoiLienHe}"`,
           `"Sản phẩm/dịch vụ chủ chốt:","${data.generalInfo.sanPhamChuChot}"`,
-          `"Ngày đánh giá:","${data.generalInfo.ngayDanhGia}"`
+          `"Ngày thực hiện bộ tiêu chí:","${data.generalInfo.ngayDanhGia}"`
       ];
       csvContent += generalInfo.join("\r\n") + "\r\n\r\n";
       const tableHeaders = `"Chỉ số","Mức độ lựa chọn","Điểm","Bằng chứng / Ghi chú"\r\n`;
