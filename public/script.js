@@ -456,10 +456,10 @@ async function getRecommendation(prompt) {
               // PHẦN D: Bảng tổng hợp kết quả
               htmlRest += `<h2>PHẦN D: BẢNG TỔNG HỢP KẾT QUẢ</h2>`;
               htmlRest += `<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;"><thead><tr><th>Trụ cột</th><th>Điểm Trung bình</th><th>Trọng số (%)</th><th>Điểm theo Trọng số</th></tr></thead><tbody>`;
-              htmlRest += `<tr><td>1. Quản lý Doanh nghiệp</td><td style="text-align:center;">${data.summary.pillar1_avg}</td><td style="text-align:center;">25%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar1_avg) * 0.35).toFixed(2)}</td></tr>`;
-              htmlRest += `<tr><td>2. Quản lý Năng suất</td><td style="text-align:center;">${data.summary.pillar2_avg}</td><td style="text-align:center;">25%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar2_avg) * 0.35).toFixed(2)}</td></tr>`;
-              htmlRest += `<tr><td>3. Hệ thống hạ tầng cho CĐS</td><td style="text-align:center;">${data.summary.pillar3_avg}</td><td style="text-align:center;">25%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar3_avg) * 0.15).toFixed(2)}</td></tr>`;
-              htmlRest += `<tr><td>4. Sản xuất Thông minh</td><td style="text-align:center;">${data.summary.pillar4_avg}</td><td style="text-align:center;">25%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar4_avg) * 0.15).toFixed(2)}</td></tr>`;
+              htmlRest += `<tr><td>1. Quản lý Doanh nghiệp</td><td style="text-align:center;">${data.summary.pillar1_avg}</td><td style="text-align:center;">25%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar1_avg) * 0.25).toFixed(2)}</td></tr>`;
+              htmlRest += `<tr><td>2. Quản lý Năng suất</td><td style="text-align:center;">${data.summary.pillar2_avg}</td><td style="text-align:center;">25%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar2_avg) * 0.25).toFixed(2)}</td></tr>`;
+              htmlRest += `<tr><td>3. Hệ thống hạ tầng cho CĐS</td><td style="text-align:center;">${data.summary.pillar3_avg}</td><td style="text-align:center;">25%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar3_avg) * 0.25).toFixed(2)}</td></tr>`;
+              htmlRest += `<tr><td>4. Sản xuất Thông minh</td><td style="text-align:center;">${data.summary.pillar4_avg}</td><td style="text-align:center;">25%</td><td style="text-align:center;">${(parseFloat(data.summary.pillar4_avg) * 0.25).toFixed(2)}</td></tr>`;
               htmlRest += `<tr><td colspan='3' style='text-align:right;'><b>TỔNG ĐIỂM ViPA</b></td><td style="text-align:center;"><b>${data.summary.totalVipaScore}</b></td></tr>`;
               htmlRest += `<tr><td colspan='3' style='text-align:right;'><b>KẾT LUẬN MỨC ĐỘ SẴN SÀNG</b></td><td style="text-align:center;"><b>${data.summary.finalRank}</b></td></tr>`;
               htmlRest += `</tbody></table>`;
