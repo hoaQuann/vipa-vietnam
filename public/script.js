@@ -191,7 +191,7 @@ async function getRecommendation(prompt) {
   
       const pillarAvgs = {};
       let totalVipaScore = 0;
-      const weights = { 1: 0.35, 2: 0.35, 3: 0.15, 4: 0.15 };
+      const weights = { 1: 0.25, 2: 0.25, 3: 0.25, 4: 0.25 };
   
       for (let i = 1; i <= 4; i++) {
           const indicatorCount = document.querySelectorAll(`input[name^="score_${i}."][type="radio"]`).length / 5;
@@ -351,10 +351,10 @@ async function getRecommendation(prompt) {
       csvContent += "\r\n\r\nBẢNG TỔNG HỢP KẾT QUẢ\r\n";
       const summaryHeaders = `"Trụ cột","Điểm Trung bình","Trọng số (%)","Điểm theo Trọng số"\r\n`;
       csvContent += summaryHeaders;
-      csvContent += `"1. Quản lý Doanh nghiệp","${data.summary.pillar1_avg}","25%","${(parseFloat(data.summary.pillar1_avg) * 0.35).toFixed(2)}"\r\n`;
-      csvContent += `"2. Quản lý Năng suất","${data.summary.pillar2_avg}","25%","${(parseFloat(data.summary.pillar2_avg) * 0.35).toFixed(2)}"\r\n`;
-      csvContent += `"3. Hệ thống hạ tầng cho CĐS","${data.summary.pillar3_avg}","25%","${(parseFloat(data.summary.pillar3_avg) * 0.15).toFixed(2)}"\r\n`;
-      csvContent += `"4. Sản xuất Thông minh","${data.summary.pillar4_avg}","25%","${(parseFloat(data.summary.pillar4_avg) * 0.15).toFixed(2)}"\r\n`;
+      csvContent += `"1. Quản lý Doanh nghiệp","${data.summary.pillar1_avg}","25%","${(parseFloat(data.summary.pillar1_avg) * 0.25).toFixed(2)}"\r\n`;
+      csvContent += `"2. Quản lý Năng suất","${data.summary.pillar2_avg}","25%","${(parseFloat(data.summary.pillar2_avg) * 0.25).toFixed(2)}"\r\n`;
+      csvContent += `"3. Hệ thống hạ tầng cho CĐS","${data.summary.pillar3_avg}","25%","${(parseFloat(data.summary.pillar3_avg) * 0.25).toFixed(2)}"\r\n`;
+      csvContent += `"4. Sản xuất Thông minh","${data.summary.pillar4_avg}","25%","${(parseFloat(data.summary.pillar4_avg) * 0.25).toFixed(2)}"\r\n`;
       csvContent += `,,,TỔNG ĐIỂM ViPA,"${data.summary.totalVipaScore}"\r\n`;
       csvContent += `,,,KẾT LUẬN,"${data.summary.finalRank}"\r\n`;
       
