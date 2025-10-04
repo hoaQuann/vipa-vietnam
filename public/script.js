@@ -282,7 +282,8 @@ async function getRecommendation(prompt) {
       const assessmentData = collectFullAssessmentData();
       const summaryScores = assessmentData.summary;
       // Prompt mới: đưa ngành nghề/sản phẩm chủ chốt vào và yêu cầu AI gợi ý phù hợp đặc thù ngành
-      let prompt = `Bạn là một chuyên gia tư vấn chiến lược kinh doanh cho các doanh nghiệp tại tỉnh Kiên Giang, Việt Nam. Một doanh nghiệp có tên "${assessmentData.generalInfo.tenDoanhNghiep || 'Một doanh nghiệp'}" vừa hoàn thành bài đánh giá mức độ sẵn sàng chuyển đổi số (ViPA) và có kết quả như sau:\n`;
+      let prompt = `Bạn là một chuyên gia tư vấn chiến lược chuyển đổi số, chuyên gia năng suất chất lượng cao hàng đầu tại Việt Nam. 
+      Một doanh nghiệp có thông tin như sau vừa hoàn thành bài đánh giá ViPA:\n`;
       prompt += `- Sản phẩm/dịch vụ chủ chốt: ${assessmentData.generalInfo.sanPhamChuChot || '[Chưa nhập]'}\n`;
       prompt += `- Tổng điểm ViPA: ${assessmentData.summary.totalVipaScore} - Mức độ: ${assessmentData.summary.finalRank}\n`;
       prompt += `- Điểm các trụ cột:\n`;
@@ -290,6 +291,16 @@ async function getRecommendation(prompt) {
       prompt += `  - Quản lý Năng suất: ${assessmentData.summary.pillar2_avg}\n`;
       prompt += `  - Hệ thống hạ tầng cho CĐS: ${assessmentData.summary.pillar3_avg}\n`;
       prompt += `  - Sản xuất Thông minh: ${assessmentData.summary.pillar4_avg}\n`;
+      prompt = `
+      
+      DỰA VÀO CÁC THÔNG TIN TRÊN, CỘNG VỚI VIỆC ĐÃ XÁC ĐỊNH SẢN PHẨM/ DỊCH VỤ CHỦ CHỐT CỦA DOANH NGHIỆP, HÃY CUNG CẤP MỘT BÁO CÁO TƯ VẤN CHI TIẾT:
+      
+      1.  **Phân tích SWOT:** Dựa trên kết quả điểm ViPA, hãy xây dựng một phân tích SWOT (Điểm mạnh, Điểm yếu, Cơ hội, Thách thức) cho doanh nghiệp này trong bối cảnh chuyển đổi số.
+      
+      2.  **Lộ trình Hành động Chiến lược:** Đề xuất một lộ trình 3 bước cụ thể, ưu tiên các giải pháp nền tảng trước, phù hợp với lĩnh vực kinh doanh của họ. Với mỗi bước, giải thích rõ 'Tại sao' (lợi ích) và 'Làm thế nào' (gợi ý triển khai).
+      
+      Vui lòng trình bày câu trả lời bằng tiếng Việt, sử dụng định dạng Markdown chuyên nghiệp, rõ ràng (tiêu đề, in đậm, danh sách).`;
+
       
       const lowScoringCriteria = assessmentData.detailedScores
           .filter(c => c.score && parseFloat(c.score) < 3)
